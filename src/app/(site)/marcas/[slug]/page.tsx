@@ -70,7 +70,7 @@ export default async function BrandPage({ params }: PageProps<"/marcas/[slug]">)
           <h2 className="mb-4 text-xl font-bold">Cursos</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {brand.sponsoredCourses.map((c) => (
-              <CourseCard key={c.id} course={c} />
+              <CourseCard key={c.id} course={c} popover />
             ))}
           </div>
         </section>

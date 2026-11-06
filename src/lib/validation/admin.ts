@@ -24,6 +24,13 @@ const ids = z
   .transform((v) => (v === undefined ? [] : Array.isArray(v) ? v : [v]).filter(Boolean));
 const url = z.union([z.literal(""), z.string().trim().url("URL inválida").max(500)]).transform((v) => v || null);
 
+/** Texto de un ítem por línea → array (máx. 10 ítems de 160 caracteres). */
+const lines = z
+  .string()
+  .optional()
+  .transform((v) => (v ?? "").split(/\r?\n/).map((l) => l.replace(/^[-•*]\s*/, "").trim()).filter(Boolean))
+  .pipe(z.array(z.string().max(160, "Cada ítem admite hasta 160 caracteres")).max(10, "Máximo 10 ítems"));
+
 export const courseSchema = z.object({
   title: z.string().trim().min(3, "Mínimo 3 caracteres").max(160),
   slug,
@@ -37,6 +44,8 @@ export const courseSchema = z.object({
   featured: z.literal("on").optional().transform((v) => v === "on"),
   sponsorIds: ids,
   sheetIds: ids,
+  outcomes: lines,
+  requirements: lines,
 });
 
 export const moduleSchema = z.object({ title: z.string().trim().min(2, "Ingrese un título").max(160) });

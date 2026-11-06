@@ -3,7 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { hashPassword } from "better-auth/crypto";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
 import { createDriver } from "../src/lib/storage/drivers.ts";
-import { brands, categories, courses, events, instructors, SAMPLE_VIDEO } from "./seed/content.mts";
+import { brands, categories, courseExtras, courses, events, instructors, SAMPLE_VIDEO, sampleQuestions } from "./seed/content.mts";
 import { coverSvg, logoSvg, technicalSheetPdf } from "./seed/assets.mts";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
@@ -89,7 +89,12 @@ async function main() {
   for (const c of courses) {
     // Las portadas de ejemplo se regeneran siempre (así un cambio de diseño llega también a bases existentes).
     const coverKey = await putSvg(`seed/courses/${c.slug}.svg`, coverSvg(c.title, c.color, categories.find((x) => x.slug === c.category)!.name));
-    if (await db.course.findUnique({ where: { slug: c.slug } })) continue;
+    const extras = courseExtras[c.slug] ?? { outcomes: [], requirements: [] };
+    const existingCourse = await db.course.findUnique({ where: { slug: c.slug } });
+    if (existingCourse) {
+      if (existingCourse.outcomes.length === 0) await db.course.update({ where: { id: existingCourse.id }, data: extras });
+      continue;
+    }
     const course = await db.course.create({
       data: {
         slug: c.slug,
@@ -98,6 +103,8 @@ async function main() {
         description: c.description,
         level: c.level,
         estimatedMinutes: c.minutes,
+        outcomes: extras.outcomes,
+        requirements: extras.requirements,
         featured: c.featured ?? false,
         status: "PUBLISHED",
         publishedAt: new Date(),
@@ -147,6 +154,28 @@ async function main() {
       },
     });
     console.log(`  evento: ${e.title}`);
+  }
+
+  if ((await db.lessonQuestion.count()) === 0) {
+    const asker = await db.user.findFirst({ where: { role: "USER" } });
+    for (const q of sampleQuestions) {
+      const lessons = await db.lesson.findMany({
+        where: { module: { course: { slug: q.course } } },
+        orderBy: [{ module: { position: "asc" } }, { position: "asc" }],
+        select: { id: true },
+      });
+      const lesson = lessons[q.lessonIndex] ?? lessons[0];
+      if (!lesson || !asker) continue;
+      await db.lessonQuestion.create({
+        data: {
+          lessonId: lesson.id,
+          userId: asker.id,
+          title: q.title,
+          body: q.body,
+          answers: { create: { userId: admin.id, body: q.answer, isStaff: true } },
+        },
+      });
+    }
   }
 
   console.log("✅ Listo");

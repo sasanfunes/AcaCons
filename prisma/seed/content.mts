@@ -628,3 +628,74 @@ Cupo muy limitado para garantizar la práctica de cada participante.`,
     },
   ];
 }
+
+/** "Lo que aprenderá" y requisitos de cada curso de ejemplo. */
+export const courseExtras: Record<string, { outcomes: string[]; requirements: string[] }> = {
+  "concreto-en-obra-dosificacion-colado-y-curado": {
+    outcomes: [
+      "Seleccionar y almacenar cemento, agregados y agua según su uso en obra",
+      "Dosificar por volumen con cajones medidores y controlar la relación agua/cemento",
+      "Realizar e interpretar la prueba de revenimiento con el cono de Abrams",
+      "Colar y vibrar elementos estructurales sin segregación",
+      "Planificar el curado del concreto en clima cálido",
+    ],
+    requirements: ["Conocimientos básicos de obra gris", "No se requiere equipo especial para seguir las lecciones"],
+  },
+  "bloque-de-concreto-seleccion-pegado-y-refuerzo": {
+    outcomes: [
+      "Revisar la calidad de una entrega de bloques antes de aceptarla",
+      "Preparar mortero de pega con la proporción y el espesor de junta correctos",
+      "Levantar muros a plomo y nivel con hiladas trabadas",
+      "Colocar refuerzo vertical, horizontal, soleras y castillos en zona sísmica",
+    ],
+    requirements: ["Experiencia básica en mampostería o supervisión de obra"],
+  },
+  "impermeabilizacion-de-losas-y-azoteas": {
+    outcomes: [
+      "Diagnosticar las causas más frecuentes de filtraciones en losas",
+      "Preparar la superficie y resolver detalles críticos: bajantes, pretiles y juntas",
+      "Aplicar sistemas acrílicos elastoméricos con malla de refuerzo",
+      "Instalar membranas asfálticas prefabricadas con traslapes correctos",
+      "Calcular el rendimiento del producto por metro cuadrado",
+    ],
+    requirements: ["Conocer los componentes de una losa de concreto", "Recomendado: curso de concreto en obra"],
+  },
+  "construccion-en-seco-con-tablayeso": {
+    outcomes: [
+      "Identificar los componentes de un sistema de construcción en seco",
+      "Trazar y armar la estructura de perfiles galvanizados",
+      "Emplacar y atornillar paneles de tablayeso correctamente",
+      "Tratar juntas y mejorar el aislamiento acústico con fibra mineral",
+    ],
+    requirements: ["Manejo de herramientas manuales y de medición"],
+  },
+  "techos-de-lamina-instalacion-y-prevencion-de-filtraciones": {
+    outcomes: [
+      "Elegir el calibre de lámina adecuado para cada proyecto",
+      "Respetar pendientes y traslapes mínimos del fabricante",
+      "Fijar láminas con tornillos y arandelas sin provocar filtraciones",
+      "Dimensionar canales y bajantes para lluvias intensas",
+    ],
+    requirements: ["No se requieren conocimientos previos"],
+  },
+};
+
+/** Preguntas de ejemplo (respondidas por el equipo académico). */
+export const sampleQuestions = [
+  {
+    course: "concreto-en-obra-dosificacion-colado-y-curado",
+    lessonIndex: 3,
+    title: "¿Qué revenimiento usar en columnas?",
+    body: "En columnas con mucho acero cuesta que el concreto baje. ¿Puedo aumentar el revenimiento agregando agua?",
+    answer:
+      "No agregue agua: reduce la resistencia. Para elementos muy armados use un aditivo plastificante o ajuste la granulometría con grava de 1/2\". Un revenimiento de 10 a 12 cm logrado con aditivo es adecuado para columnas.",
+  },
+  {
+    course: "impermeabilizacion-de-losas-y-azoteas",
+    lessonIndex: 2,
+    title: "¿Cuánto esperar entre manos?",
+    body: "¿Cuánto tiempo hay que esperar entre la primera y la segunda mano del impermeabilizante acrílico?",
+    answer:
+      "Hasta que la primera mano esté seca al tacto, normalmente entre 2 y 4 horas según temperatura y humedad. Consulte siempre la ficha técnica del producto que esté usando.",
+  },
+];

@@ -3,7 +3,7 @@ import { AlertCircle, CheckCircle2, Info } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export function Container({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("mx-auto w-full max-w-6xl px-4 sm:px-6", className)} {...props} />;
+  return <div className={cn("mx-auto w-full max-w-7xl px-4 sm:px-6", className)} {...props} />;
 }
 
 export function Card({ className, ...props }: ComponentProps<"div">) {

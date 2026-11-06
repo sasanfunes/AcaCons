@@ -9,6 +9,7 @@ test("admin crea y publica un curso con módulo, lección y evaluación", async 
   await page.getByLabel("Categoría").selectOption({ label: "Concreto y cemento" });
   await page.getByLabel("Duración estimada (min)").fill("120");
   await page.getByText("Cementos del Valle").first().click();
+  await page.getByLabel("Lo que aprenderá (uno por línea)").fill("Compactar la sub-base\nColar y pulir el piso");
   await page.getByRole("button", { name: "Crear curso" }).click();
   await expect(page.getByText("Curso creado.")).toBeVisible();
 
@@ -39,5 +40,6 @@ test("admin crea y publica un curso con módulo, lección y evaluación", async 
   await page.goto("/cursos?q=pulido");
   await page.getByRole("link", { name: /Pisos de concreto pulido/ }).click();
   await expect(page.getByText("Compactación de la sub-base")).toBeVisible();
-  await expect(page.getByText(/Apruebe “Evaluación final” con 70%/)).toBeVisible();
+  await expect(page.getByText("1 sección · 1 lección")).toBeVisible();
+  await expect(page.getByText("Lo que aprenderá")).toBeVisible();
 });

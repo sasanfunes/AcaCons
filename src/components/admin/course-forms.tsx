@@ -39,6 +39,8 @@ export type CourseFormValues = {
   featured?: boolean;
   sponsorIds?: string[];
   sheetIds?: string[];
+  outcomes?: string[];
+  requirements?: string[];
 };
 
 export function CourseForm({
@@ -75,6 +77,14 @@ export function CourseForm({
       <Field label="Descripción" htmlFor="description" error={e.description} hint="Admite formato simple: ## títulos, - listas, **negrita**.">
         <Textarea id="description" name="description" defaultValue={c.description} rows={8} />
       </Field>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Lo que aprenderá (uno por línea)" htmlFor="outcomes" error={e.outcomes} hint="Se muestra como lista con checks en la página del curso. Máx. 10.">
+          <Textarea id="outcomes" name="outcomes" defaultValue={c.outcomes?.join("\n")} rows={5} />
+        </Field>
+        <Field label="Requisitos (uno por línea)" htmlFor="requirements" error={e.requirements}>
+          <Textarea id="requirements" name="requirements" defaultValue={c.requirements?.join("\n")} rows={5} />
+        </Field>
+      </div>
       <div className="grid gap-4 md:grid-cols-4">
         <Field label="Categoría" htmlFor="categoryId" error={e.categoryId}>
           <Select id="categoryId" name="categoryId" defaultValue={c.categoryId ?? ""} required>

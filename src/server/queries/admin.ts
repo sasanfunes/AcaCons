@@ -41,5 +41,6 @@ export async function adminDashboard() {
     db.user.groupBy({ by: ["profession"], _count: true, orderBy: { _count: { profession: "desc" } } }),
     db.user.findMany({ orderBy: { createdAt: "desc" }, take: 5, select: { id: true, name: true, email: true, createdAt: true, city: true } }),
   ]);
-  return { users, newUsers, enrollments, completions, certificates, events, byProfession, recentUsers };
+  const pendingQuestions = await db.lessonQuestion.count({ where: { hidden: false, answers: { none: { isStaff: true } } } });
+  return { users, newUsers, enrollments, completions, certificates, events, byProfession, recentUsers, pendingQuestions };
 }

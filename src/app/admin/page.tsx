@@ -5,22 +5,28 @@ import { PROFESSIONS } from "@/lib/constants";
 import { Card, PageHeader } from "@/components/ui/misc";
 
 export default async function AdminHome() {
-  const { users, newUsers, enrollments, completions, certificates, events, byProfession, recentUsers } = await adminDashboard();
+  const { users, newUsers, enrollments, completions, certificates, events, byProfession, recentUsers, pendingQuestions } = await adminDashboard();
   const stats = [
     { label: "Usuarios registrados", value: users, hint: `+${newUsers} en 30 días` },
     { label: "Inscripciones a cursos", value: enrollments },
     { label: "Cursos completados", value: completions, hint: enrollments ? `${Math.round((completions / enrollments) * 100)}% de finalización` : undefined },
     { label: "Certificados emitidos", value: certificates },
+    { label: "Preguntas sin responder", value: pendingQuestions, href: "/admin/preguntas" },
   ];
   return (
     <>
       <PageHeader title="Resumen" />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {stats.map((s) => (
           <Card key={s.label} className="p-5">
             <p className="text-sm text-ink-600">{s.label}</p>
             <p className="mt-1 text-3xl font-bold">{s.value}</p>
-            {s.hint && <p className="mt-1 text-xs text-ink-500">{s.hint}</p>}
+            {"hint" in s && s.hint && <p className="mt-1 text-xs text-ink-500">{s.hint}</p>}
+            {"href" in s && s.href && (
+              <Link href={s.href} className="mt-1 inline-block text-xs font-semibold text-brand-700 hover:underline">
+                Responder →
+              </Link>
+            )}
           </Card>
         ))}
       </div>

@@ -35,7 +35,7 @@ export default async function MiCuentaPage({ searchParams }: PageProps<"/mi-cuen
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {inProgress.map((e) => (
-              <CourseCard key={e.id} course={e.course} progress={e.progress} />
+              <CourseCard key={e.id} course={e.course} progress={e.progress} href={e.nextHref} />
             ))}
           </div>
         )}

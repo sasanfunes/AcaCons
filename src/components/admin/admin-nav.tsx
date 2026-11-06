@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Building2, CalendarDays, GraduationCap, LayoutDashboard, Tags, Users } from "lucide-react";
+import { BookOpen, Building2, CalendarDays, GraduationCap, LayoutDashboard, MessageSquare, Tags, Users } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const ITEMS = [
   { href: "/admin", label: "Resumen", icon: LayoutDashboard },
   { href: "/admin/cursos", label: "Cursos", icon: BookOpen },
+  { href: "/admin/preguntas", label: "Preguntas", icon: MessageSquare },
   { href: "/admin/eventos", label: "Eventos", icon: CalendarDays },
   { href: "/admin/marcas", label: "Marcas", icon: Building2 },
   { href: "/admin/categorias", label: "Categorías", icon: Tags },
@@ -14,7 +15,7 @@ const ITEMS = [
   { href: "/admin/usuarios", label: "Usuarios", icon: Users },
 ];
 
-export function AdminNav() {
+export function AdminNav({ pendingQuestions = 0 }: { pendingQuestions?: number }) {
   const path = usePathname();
   return (
     <nav aria-label="Administración" className="flex gap-1 overflow-x-auto lg:flex-col">
@@ -30,7 +31,10 @@ export function AdminNav() {
               active ? "bg-brand-500 text-ink-900" : "text-ink-300 hover:bg-white/10 hover:text-white",
             )}
           >
-            <Icon className="h-4 w-4" aria-hidden /> {label}
+            <Icon className="h-4 w-4" aria-hidden /> <span className="flex-1">{label}</span>
+            {href === "/admin/preguntas" && pendingQuestions > 0 && (
+              <span className="rounded-full bg-brand-500 px-2 text-xs font-bold text-ink-900">{pendingQuestions}</span>
+            )}
           </Link>
         );
       })}

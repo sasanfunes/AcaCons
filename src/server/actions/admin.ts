@@ -81,6 +81,8 @@ export async function saveCourseAction(_prev: ActionState, formData: FormData): 
     instructorId: d.instructorId,
     status: d.status,
     featured: d.featured,
+    outcomes: d.outcomes,
+    requirements: d.requirements,
     publishedAt: d.status === "PUBLISHED" ? (existing?.publishedAt ?? new Date()) : existing?.publishedAt,
     ...(cover.key ? { coverKey: cover.key } : {}),
   };

@@ -1,7 +1,8 @@
 import "server-only";
+import { cache } from "react";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
-import { LEVELS } from "@/lib/constants";
+import { durationRanges, type CatalogQuery } from "@/lib/domain/catalog";
 
 export const courseCardSelect = {
   id: true,
@@ -12,37 +13,70 @@ export const courseCardSelect = {
   level: true,
   estimatedMinutes: true,
   featured: true,
+  outcomes: true,
   category: { select: { name: true, slug: true } },
   instructor: { select: { name: true } },
   sponsors: { select: { name: true, slug: true } },
   modules: { select: { _count: { select: { lessons: true } } } },
+  _count: { select: { enrollments: true } },
 } satisfies Prisma.CourseSelect;
 
 export type CourseCardData = Prisma.CourseGetPayload<{ select: typeof courseCardSelect }>;
 
-export type CatalogFilters = { categoria?: string; marca?: string; nivel?: string; q?: string };
+const ORDER: Record<CatalogQuery["orden"], Prisma.CourseOrderByWithRelationInput[]> = {
+  relevancia: [{ featured: "desc" }, { enrollments: { _count: "desc" } }, { publishedAt: "desc" }],
+  recientes: [{ publishedAt: "desc" }],
+  populares: [{ enrollments: { _count: "desc" } }, { publishedAt: "desc" }],
+  cortos: [{ estimatedMinutes: "asc" }],
+};
 
-export async function listPublishedCourses(f: CatalogFilters = {}) {
-  const where: Prisma.CourseWhereInput = { status: "PUBLISHED" };
-  if (f.categoria) where.category = { slug: f.categoria };
-  if (f.marca) where.sponsors = { some: { slug: f.marca } };
-  if (f.nivel && f.nivel in LEVELS) where.level = f.nivel as keyof typeof LEVELS;
-  if (f.q?.trim()) {
-    const q = f.q.trim().slice(0, 100);
-    where.OR = [
-      { title: { contains: q, mode: "insensitive" } },
-      { summary: { contains: q, mode: "insensitive" } },
-      { category: { name: { contains: q, mode: "insensitive" } } },
-    ];
+export async function listPublishedCourses(f: CatalogQuery) {
+  const and: Prisma.CourseWhereInput[] = [{ status: "PUBLISHED" }];
+  if (f.categorias.length) and.push({ category: { slug: { in: f.categorias } } });
+  if (f.marcas.length) and.push({ sponsors: { some: { slug: { in: f.marcas } } } });
+  if (f.niveles.length) and.push({ level: { in: f.niveles } });
+  if (f.duraciones.length) {
+    and.push({
+      OR: durationRanges(f.duraciones).map((r) => ({
+        estimatedMinutes: r.max === null ? { gte: r.min } : { gte: r.min, lte: r.max },
+      })),
+    });
   }
+  if (f.q) {
+    and.push({
+      OR: [
+        { title: { contains: f.q, mode: "insensitive" } },
+        { summary: { contains: f.q, mode: "insensitive" } },
+        { category: { name: { contains: f.q, mode: "insensitive" } } },
+        { sponsors: { some: { name: { contains: f.q, mode: "insensitive" } } } },
+      ],
+    });
+  }
+  return db.course.findMany({ where: { AND: and }, select: courseCardSelect, orderBy: ORDER[f.orden] });
+}
+
+export function recentCourses(take = 10) {
+  return db.course.findMany({ where: { status: "PUBLISHED" }, select: courseCardSelect, orderBy: { publishedAt: "desc" }, take });
+}
+
+export function coursesInCategory(categoryId: string, excludeId?: string, take = 10) {
   return db.course.findMany({
-    where,
+    where: { status: "PUBLISHED", categoryId, ...(excludeId ? { id: { not: excludeId } } : {}) },
     select: courseCardSelect,
     orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
+    take,
   });
 }
 
-export function featuredCourses(take = 3) {
+/** Cursos publicados agrupados por categoría (pestañas del inicio). */
+export async function coursesByCategory(perCategory = 10) {
+  const categories = await listCategoriesWithCourses();
+  return Promise.all(
+    categories.map(async (c) => ({ ...c, courses: await coursesInCategory(c.id, undefined, perCategory) })),
+  );
+}
+
+export function featuredCourses(take = 10) {
   return db.course.findMany({
     where: { status: "PUBLISHED" },
     select: courseCardSelect,
@@ -51,13 +85,14 @@ export function featuredCourses(take = 3) {
   });
 }
 
-export function listCategoriesWithCourses() {
+/** Categorías con cursos publicados (menú del encabezado, filtros). Memoizado por request. */
+export const listCategoriesWithCourses = cache(function listCategoriesWithCourses() {
   return db.category.findMany({
     where: { courses: { some: { status: "PUBLISHED" } } },
     orderBy: { position: "asc" },
     select: { id: true, name: true, slug: true, _count: { select: { courses: { where: { status: "PUBLISHED" } } } } },
   });
-}
+});
 
 export async function getCourseBySlug(slug: string, { includeDrafts = false } = {}) {
   const course = await db.course.findUnique({

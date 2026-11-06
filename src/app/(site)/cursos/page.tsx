@@ -1,94 +1,88 @@
 import type { Metadata } from "next";
-import { Search } from "lucide-react";
-import { listPublishedCourses, listCategoriesWithCourses } from "@/server/queries/courses";
+import Link from "next/link";
+import { SlidersHorizontal, X } from "lucide-react";
+import { listCategoriesWithCourses, listPublishedCourses } from "@/server/queries/courses";
 import { listBrands } from "@/server/queries/brands";
+import { catalogHref, DURATIONS, hasFilters, parseCatalogQuery } from "@/lib/domain/catalog";
 import { LEVELS } from "@/lib/constants";
-import { CourseCard } from "@/components/course/course-card";
-import { Button, ButtonLink } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/form";
-import { Container, EmptyState, PageHeader } from "@/components/ui/misc";
+import { CourseRow } from "@/components/course/course-card";
+import { CatalogFilters } from "@/components/course/catalog-filters";
+import { SortSelect } from "@/components/course/sort-select";
+import { ButtonLink } from "@/components/ui/button";
+import { Container, EmptyState } from "@/components/ui/misc";
 
 export const metadata: Metadata = {
   title: "Cursos",
-  description: "Catálogo de cursos gratuitos sobre materiales de construcción y sus aplicaciones.",
+  description: "Catálogo de cursos sobre materiales de construcción y sistemas constructivos.",
 };
 
-const str = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
-
 export default async function CursosPage({ searchParams }: PageProps<"/cursos">) {
-  const sp = await searchParams;
-  const filters = { categoria: str(sp.categoria), marca: str(sp.marca), nivel: str(sp.nivel), q: str(sp.q) };
-  const [courses, categories, brands] = await Promise.all([listPublishedCourses(filters), listCategoriesWithCourses(), listBrands()]);
-  const hasFilters = Object.values(filters).some(Boolean);
+  const query = parseCatalogQuery(await searchParams);
+  const [courses, categories, brands] = await Promise.all([listPublishedCourses(query), listCategoriesWithCourses(), listBrands()]);
+  const filtered = hasFilters(query);
+  const single = query.categorias.length === 1 && !query.q ? categories.find((c) => c.slug === query.categorias[0]) : undefined;
+  const title = query.q ? `${courses.length} resultados para «${query.q}»` : single ? `Cursos de ${single.name.toLowerCase()}` : "Todos los cursos";
+
+  // Chips de filtros activos (cada uno se puede quitar).
+  const chips = [
+    ...query.categorias.map((c) => ({ label: categories.find((x) => x.slug === c)?.name ?? c, href: catalogHref(query, { categorias: query.categorias.filter((x) => x !== c) }) })),
+    ...query.niveles.map((n) => ({ label: LEVELS[n], href: catalogHref(query, { niveles: query.niveles.filter((x) => x !== n) }) })),
+    ...query.duraciones.map((d) => ({ label: DURATIONS[d].label, href: catalogHref(query, { duraciones: query.duraciones.filter((x) => x !== d) }) })),
+    ...query.marcas.map((m) => ({ label: brands.find((b) => b.slug === m)?.name ?? m, href: catalogHref(query, { marcas: query.marcas.filter((x) => x !== m) }) })),
+  ];
+
+  const filters = (
+    <CatalogFilters
+      query={query}
+      categories={categories.map((c) => ({ slug: c.slug, name: c.name, count: c._count.courses }))}
+      brands={brands.map((b) => ({ slug: b.slug, name: b.name }))}
+    />
+  );
 
   return (
-    <Container className="py-10">
-      <PageHeader title="Cursos" description="Formación práctica y gratuita sobre materiales, sistemas constructivos y buenas prácticas de obra." />
-      <form className="mb-8 grid gap-3 rounded-lg border border-ink-200 bg-ink-50 p-4 sm:grid-cols-2 lg:grid-cols-5" role="search">
-        <div className="lg:col-span-2">
-          <Label htmlFor="q">Buscar</Label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-ink-500" aria-hidden />
-            <Input id="q" name="q" defaultValue={filters.q} placeholder="Ej.: impermeabilización, bloque…" className="pl-9" />
-          </div>
-        </div>
-        <div>
-          <Label htmlFor="categoria">Categoría</Label>
-          <Select id="categoria" name="categoria" defaultValue={filters.categoria ?? ""}>
-            <option value="">Todas</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.slug}>
-                {c.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="marca">Marca</Label>
-          <Select id="marca" name="marca" defaultValue={filters.marca ?? ""}>
-            <option value="">Todas</option>
-            {brands.map((b) => (
-              <option key={b.id} value={b.slug}>
-                {b.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="nivel">Nivel</Label>
-          <Select id="nivel" name="nivel" defaultValue={filters.nivel ?? ""}>
-            <option value="">Todos</option>
-            {Object.entries(LEVELS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="flex gap-2 sm:col-span-2 lg:col-span-5 lg:justify-end">
-          {hasFilters && (
-            <ButtonLink href="/cursos" variant="ghost">
-              Limpiar filtros
-            </ButtonLink>
-          )}
-          <Button type="submit">Filtrar</Button>
-        </div>
-      </form>
+    <Container className="py-8">
+      {single && <p className="kicker mb-1 text-brand-700">Categoría</p>}
+      <h1 className="text-2xl font-bold text-ink-900 sm:text-3xl">{title}</h1>
+      {!query.q && <p className="mt-1 text-ink-600">{courses.length} {courses.length === 1 ? "curso" : "cursos"} con evaluación y certificado.</p>}
 
-      {courses.length === 0 ? (
-        <EmptyState title="No encontramos cursos con esos filtros">Pruebe con otra categoría o término de búsqueda.</EmptyState>
-      ) : (
-        <>
-          <p className="mb-4 text-sm text-ink-600">
-            {courses.length} {courses.length === 1 ? "curso" : "cursos"}
-          </p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {courses.map((c) => (
-              <CourseCard key={c.id} course={c} />
-            ))}
-          </div>
-        </>
-      )}
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <details className="w-full lg:hidden">
+          <summary className="flex h-11 cursor-pointer list-none items-center gap-2 rounded-md border border-ink-900 px-4 text-sm font-semibold">
+            <SlidersHorizontal className="h-4 w-4" aria-hidden /> Filtrar {chips.length > 0 && `(${chips.length})`}
+          </summary>
+          <div className="mt-2 rounded-md border border-ink-200 bg-white px-4 pb-4">{filters}</div>
+        </details>
+        <div className="flex flex-wrap gap-2">
+          {chips.map((c) => (
+            <Link key={c.label} href={c.href} className="inline-flex items-center gap-1 rounded-full border border-ink-900 bg-white px-3 py-1 text-sm hover:bg-ink-50">
+              {c.label} <X className="h-3.5 w-3.5" aria-label="Quitar filtro" />
+            </Link>
+          ))}
+        </div>
+        <SortSelect query={query} />
+      </div>
+
+      <div className="mt-4 grid gap-8 lg:grid-cols-[260px_1fr]">
+        <aside className="hidden lg:block" aria-label="Filtros">
+          {filters}
+        </aside>
+        <section aria-label="Resultados">
+          {courses.length === 0 ? (
+            <EmptyState
+              title={query.q ? `No encontramos cursos para «${query.q}»` : "No hay cursos con esos filtros"}
+              action={filtered ? <ButtonLink href="/cursos" variant="outline">Ver todos los cursos</ButtonLink> : undefined}
+            >
+              Revise la ortografía o pruebe con un término más general, por ejemplo “concreto” o “techos”.
+            </EmptyState>
+          ) : (
+            <div className="border-t border-ink-200">
+              {courses.map((c) => (
+                <CourseRow key={c.id} course={c} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </Container>
   );
 }

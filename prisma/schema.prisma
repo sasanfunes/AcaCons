@@ -78,6 +78,8 @@ model User {
   quizAttempts       QuizAttempt[]
   certificates       Certificate[]
   eventRegistrations EventRegistration[]
+  lessonQuestions    LessonQuestion[]
+  lessonAnswers      LessonAnswer[]
 
   @@map("user")
 }
@@ -206,6 +208,8 @@ model Course {
   estimatedMinutes Int           @default(60)
   status           PublishStatus @default(DRAFT)
   featured         Boolean       @default(false)
+  outcomes         String[]      @default([])
+  requirements     String[]      @default([])
   publishedAt      DateTime?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
@@ -253,7 +257,8 @@ model Lesson {
   content         String?
   isPreview       Boolean       @default(false)
 
-  progress LessonProgress[]
+  progress  LessonProgress[]
+  questions LessonQuestion[]
 
   @@index([moduleId, position])
   @@map("lesson")
@@ -423,4 +428,38 @@ model StoredFile {
   createdAt   DateTime @default(now())
 
   @@map("stored_file")
+}
+
+// ─────────────────────────── Preguntas y respuestas por lección ───────────────────────────
+
+model LessonQuestion {
+  id        String   @id @default(cuid())
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  hidden    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  answers LessonAnswer[]
+
+  @@index([lessonId, createdAt])
+  @@index([createdAt])
+  @@map("lesson_question")
+}
+
+model LessonAnswer {
+  id         String         @id @default(cuid())
+  questionId String
+  question   LessonQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body       String
+  isStaff    Boolean        @default(false)
+  createdAt  DateTime       @default(now())
+
+  @@index([questionId, createdAt])
+  @@map("lesson_answer")
 }

@@ -66,3 +66,14 @@ export function waitlistPromotedEmail(name: string, ev: EventInfo, ticketCode: s
     ),
   };
 }
+
+export function questionAnsweredEmail(name: string, questionTitle: string, courseTitle: string, answer: string, url: string) {
+  return {
+    subject: `Respondieron su pregunta: ${questionTitle}`,
+    html: layout(
+      `Hola, ${esc(name)}`,
+      `<p>El equipo académico respondió su pregunta <strong>«${esc(questionTitle)}»</strong> del curso <strong>${esc(courseTitle)}</strong>:</p>
+       <blockquote style="margin:12px 0;padding:12px 16px;border-left:4px solid #F26A1B;background:#FBFAF7">${esc(answer).replace(/\n/g, "<br>")}</blockquote>${button(url, "Ver la conversación")}`,
+    ),
+  };
+}

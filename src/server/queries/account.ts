@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db";
-import { courseProgress } from "@/lib/domain/progress";
+import { courseProgress, nextPendingLesson } from "@/lib/domain/progress";
 import { courseCardSelect } from "./courses";
 import { eventCardSelect } from "./events";
 
@@ -8,13 +8,25 @@ export async function getMyCourses(userId: string) {
   const enrollments = await db.enrollment.findMany({
     where: { userId },
     orderBy: { enrolledAt: "desc" },
-    include: { course: { select: { ...courseCardSelect, modules: { select: { _count: { select: { lessons: true } }, lessons: { select: { id: true } } } } } } },
+    include: {
+      course: {
+        select: {
+          ...courseCardSelect,
+          modules: {
+            orderBy: { position: "asc" },
+            select: { _count: { select: { lessons: true } }, lessons: { orderBy: { position: "asc" }, select: { id: true } } },
+          },
+        },
+      },
+    },
   });
   const done = await db.lessonProgress.findMany({ where: { userId }, select: { lessonId: true } });
   const doneIds = done.map((d) => d.lessonId);
   return enrollments.map((e) => {
     const lessonIds = e.course.modules.flatMap((m) => m.lessons.map((l) => l.id));
-    return { ...e, progress: e.completedAt ? 100 : courseProgress(lessonIds, doneIds) };
+    const progress = e.completedAt ? 100 : courseProgress(lessonIds, doneIds);
+    const next = nextPendingLesson(lessonIds, doneIds);
+    return { ...e, progress, nextHref: next && progress > 0 ? `/cursos/${e.course.slug}/leccion/${next}` : `/cursos/${e.course.slug}` };
   });
 }
 
