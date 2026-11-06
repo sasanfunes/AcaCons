@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { deleteBrandAction, deleteSheetAction } from "@/server/actions/admin";
 import { formatBytes } from "@/lib/format";
 import { fileUrl } from "@/lib/storage/url";
+import { MAX_PDF_MB } from "@/lib/storage";
 import { BrandForm, SheetForm } from "@/components/admin/misc-forms";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { Alert, Card, PageHeader } from "@/components/ui/misc";
@@ -58,7 +59,7 @@ export default async function EditBrand({ params, searchParams }: PageProps<"/ad
               ))}
             </ul>
           )}
-          <SheetForm brandId={brand.id} categories={categories} />
+          <SheetForm brandId={brand.id} categories={categories} maxMb={MAX_PDF_MB} />
         </Card>
       </div>
     </>

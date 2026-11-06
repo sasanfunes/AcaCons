@@ -412,3 +412,15 @@ model EventRegistration {
   @@index([eventId, status, createdAt])
   @@map("event_registration")
 }
+
+// ─────────────────────────── Archivos (STORAGE_DRIVER=db) ───────────────────────────
+
+model StoredFile {
+  key         String   @id
+  contentType String
+  size        Int
+  data        Bytes
+  createdAt   DateTime @default(now())
+
+  @@map("stored_file")
+}

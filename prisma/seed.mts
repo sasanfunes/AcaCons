@@ -7,7 +7,7 @@ import { brands, categories, courses, events, instructors, SAMPLE_VIDEO } from "
 import { coverSvg, logoSvg, technicalSheetPdf } from "./seed/assets.mts";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
-const storage = createDriver(process.env);
+const storage = createDriver(process.env, db);
 const enc = new TextEncoder();
 
 async function putSvg(key: string, svg: string) {
@@ -41,7 +41,7 @@ async function main() {
     "ADMIN",
   );
   console.log(`  admin: ${admin.email}`);
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" || process.env.SEED_DEMO_USER === "true") {
     const demo = await ensureUser("estudiante@acacons.local", "Estudiante123!", "Lucía Hernández", "USER", {
       profession: "MAESTRO_DE_OBRA",
       department: "Francisco Morazán",

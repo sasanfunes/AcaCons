@@ -66,7 +66,7 @@ export function BrandForm({
   );
 }
 
-export function SheetForm({ brandId, categories }: { brandId: string; categories: { id: string; name: string }[] }) {
+export function SheetForm({ brandId, categories, maxMb = 20 }: { brandId: string; categories: { id: string; name: string }[]; maxMb?: number }) {
   const [state, action] = useActionState(addSheetAction, initialState);
   const ref = useReset(state, true);
   const e = state.fieldErrors ?? {};
@@ -91,7 +91,7 @@ export function SheetForm({ brandId, categories }: { brandId: string; categories
             ))}
           </Select>
         </Field>
-        <Field label="Archivo PDF (máx. 20 MB)" htmlFor="sheet-file" error={e.file}>
+        <Field label={`Archivo PDF (máx. ${maxMb} MB)`} htmlFor="sheet-file" error={e.file}>
           <Input id="sheet-file" name="file" type="file" accept="application/pdf" className="py-1.5" required />
         </Field>
       </div>

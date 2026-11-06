@@ -87,7 +87,26 @@ src/proxy.ts            redirección rápida a /ingresar si no hay sesión (la a
 e2e/, tests/            Playwright y Vitest
 ```
 
-## Producción
+## Publicar en Vercel (recomendado)
+
+El proyecto está preparado para Vercel + Neon sin correr comandos en su computadora: en cada deploy el script
+`vercel-build` aplica las migraciones, siembra los datos de ejemplo (sin duplicarlos) y compila la app. Los archivos
+(portadas, logos, fichas) se guardan en la propia base con `STORAGE_DRIVER=db`.
+
+1. En [vercel.com](https://vercel.com), ingrese con GitHub → **Add New → Project** → importe este repositorio (rama `main`).
+2. En **Environment Variables** agregue:
+   - `BETTER_AUTH_SECRET`: texto aleatorio de 32 caracteres o más.
+   - `STORAGE_DRIVER`: `db`
+   - `ADMIN_EMAIL` y `ADMIN_PASSWORD`: su usuario administrador.
+   - `SEED_DEMO_USER`: `true` si quiere el alumno de ejemplo.
+3. Pestaña **Storage → Create Database → Neon** y conéctela al proyecto (crea `DATABASE_URL` y `DATABASE_URL_UNPOOLED`).
+4. **Deploy** (o **Redeploy** si el primer intento fue antes de crear la base).
+
+`APP_URL` es opcional en Vercel: si no se define, se usa el dominio de producción del proyecto. Si conecta un dominio
+propio, defina `APP_URL` con él. Sin Resend los correos solo quedan en los registros, así que deje
+`REQUIRE_EMAIL_VERIFICATION` en `false` hasta configurarlo.
+
+## Producción (otros hostings)
 
 1. Base PostgreSQL administrada (Neon, Supabase, RDS…) → `DATABASE_URL`.
 2. `BETTER_AUTH_SECRET` aleatorio (`openssl rand -base64 32`), `APP_URL` y `BETTER_AUTH_URL` con el dominio público.

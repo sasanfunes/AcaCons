@@ -10,6 +10,8 @@ import { resetPasswordEmail, verificationEmail } from "@/lib/email/templates";
 export const auth = betterAuth({
   baseURL: env.APP_URL,
   secret: env.BETTER_AUTH_SECRET,
+  // Permite ingresar también desde las URLs de vista previa de Vercel.
+  trustedOrigins: [env.APP_URL, ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : [])],
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,

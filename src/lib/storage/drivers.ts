@@ -114,7 +114,67 @@ export class S3Driver implements StorageDriver {
   }
 }
 
-export function createDriver(e: Record<string, unknown> & Partial<Record<"STORAGE_DRIVER" | "S3_REGION" | "S3_ENDPOINT" | "S3_BUCKET" | "S3_ACCESS_KEY_ID" | "S3_SECRET_ACCESS_KEY" | "STORAGE_LOCAL_DIR", string>>): StorageDriver {
+/** Cliente mínimo que necesita DbDriver (compatible con PrismaClient). */
+export type StoredFileClient = {
+  storedFile: {
+    upsert(args: {
+      where: { key: string };
+      create: { key: string; contentType: string; size: number; data: Uint8Array<ArrayBuffer> };
+      update: { contentType: string; size: number; data: Uint8Array<ArrayBuffer> };
+    }): Promise<unknown>;
+    findUnique(args: { where: { key: string } }): Promise<{ data: Uint8Array; size: number } | null>;
+    deleteMany(args: { where: { key: string } }): Promise<unknown>;
+  };
+};
+
+/** Guarda los archivos en PostgreSQL (tabla stored_file). Ideal para hosting sin disco persistente (Vercel). */
+export class DbDriver implements StorageDriver {
+  constructor(private client: StoredFileClient) {}
+  async put(key: string, data: Uint8Array, contentType: string) {
+    assertSafeKey(key);
+    const bytes = new Uint8Array(data.byteLength);
+    bytes.set(data);
+    await this.client.storedFile.upsert({
+      where: { key },
+      create: { key, contentType, size: bytes.byteLength, data: bytes },
+      update: { contentType, size: bytes.byteLength, data: bytes },
+    });
+  }
+  async get(key: string) {
+    assertSafeKey(key);
+    const row = await this.client.storedFile.findUnique({ where: { key } });
+    if (!row) return null;
+    const data = row.data;
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new Uint8Array(data));
+        controller.close();
+      },
+    });
+    return { stream, size: row.size };
+  }
+  async delete(key: string) {
+    assertSafeKey(key);
+    await this.client.storedFile.deleteMany({ where: { key } });
+  }
+}
+
+type DriverEnv = Record<string, unknown> &
+  Partial<
+    Record<
+      "STORAGE_DRIVER" | "S3_REGION" | "S3_ENDPOINT" | "S3_BUCKET" | "S3_ACCESS_KEY_ID" | "S3_SECRET_ACCESS_KEY" | "STORAGE_LOCAL_DIR",
+      string
+    >
+  >;
+
+export function createDriver(
+  e: DriverEnv,
+  client?: StoredFileClient,
+): StorageDriver {
+  if (e.STORAGE_DRIVER === "db") {
+    if (!client) throw new Error("STORAGE_DRIVER=db requiere un cliente de base de datos");
+    return new DbDriver(client);
+  }
   return e.STORAGE_DRIVER === "s3"
     ? new S3Driver({
         region: e.S3_REGION ?? "auto",

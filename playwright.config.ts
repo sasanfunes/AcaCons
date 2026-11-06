@@ -33,7 +33,7 @@ export default defineConfig({
       BETTER_AUTH_URL: baseURL,
       REQUIRE_EMAIL_VERIFICATION: "false",
       EMAIL_DRIVER: "console",
-      STORAGE_DRIVER: "local",
+      STORAGE_DRIVER: process.env.E2E_STORAGE_DRIVER ?? "local",
       STORAGE_LOCAL_DIR: "./storage-e2e",
     },
   },

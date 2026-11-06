@@ -8,7 +8,7 @@ if (!url || !/_e2e\b/.test(new URL(url).pathname)) {
   console.error("Defina E2E_DATABASE_URL apuntando a una base cuyo nombre termine en _e2e");
   process.exit(1);
 }
-const env = { ...process.env, DATABASE_URL: url, STORAGE_DRIVER: "local", STORAGE_LOCAL_DIR: "./storage-e2e", NODE_ENV: "test" };
+const env = { ...process.env, DATABASE_URL: url, STORAGE_DRIVER: process.env.E2E_STORAGE_DRIVER ?? "local", STORAGE_LOCAL_DIR: "./storage-e2e", NODE_ENV: "test" };
 execSync("npx prisma migrate deploy", { stdio: "inherit", env });
 const client = new pg.Client({ connectionString: url });
 await client.connect();
