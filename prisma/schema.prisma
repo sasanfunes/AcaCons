@@ -1,0 +1,414 @@
+// AcaCons — Academia del Constructor
+// Prisma 7: la URL de conexión se define en prisma.config.ts y el cliente usa @prisma/adapter-pg.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────── Enums ───────────────────────────
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Profession {
+  ARQUITECTO
+  INGENIERO_CIVIL
+  MAESTRO_DE_OBRA
+  CONTRATISTA
+  TECNICO
+  ALBANIL_OFICIO
+  ESTUDIANTE
+  FERRETERIA_DISTRIBUIDOR
+  OTRO
+}
+
+enum Level {
+  INICIAL
+  INTERMEDIO
+  AVANZADO
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum VideoProvider {
+  YOUTUBE
+  VIMEO
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  WAITLISTED
+  CANCELLED
+}
+
+// ─────────────────── Usuarios y autenticación (better-auth) ───────────────────
+
+model User {
+  id            String      @id
+  name          String
+  email         String      @unique
+  emailVerified Boolean     @default(false)
+  image         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  role       Role        @default(USER)
+  profession Profession?
+  company    String?
+  country    String      @default("HN")
+  department String?
+  city       String?
+  phone      String?
+
+  sessions           Session[]
+  accounts           Account[]
+  enrollments        Enrollment[]
+  lessonProgress     LessonProgress[]
+  quizAttempts       QuizAttempt[]
+  certificates       Certificate[]
+  eventRegistrations EventRegistration[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ─────────────────────────── Catálogo ───────────────────────────
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  position    Int     @default(0)
+
+  courses         Course[]
+  events          Event[]
+  technicalSheets TechnicalSheet[]
+
+  @@map("category")
+}
+
+model Brand {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  logoKey     String?
+  description String
+  website     String?
+  status      PublishStatus @default(PUBLISHED)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  technicalSheets  TechnicalSheet[]
+  sponsoredCourses Course[]         @relation("CourseSponsors")
+  sponsoredEvents  Event[]          @relation("EventSponsors")
+
+  @@map("brand")
+}
+
+model TechnicalSheet {
+  id          String    @id @default(cuid())
+  brandId     String
+  brand       Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  title       String
+  productName String?
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  fileKey     String
+  fileSize    Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  courses Course[] @relation("CourseTechnicalSheets")
+
+  @@index([brandId])
+  @@map("technical_sheet")
+}
+
+model Instructor {
+  id       String  @id @default(cuid())
+  name     String
+  title    String?
+  bio      String?
+  photoKey String?
+
+  courses Course[]
+
+  @@map("instructor")
+}
+
+// ─────────────────────────── Cursos ───────────────────────────
+
+model Course {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  summary          String
+  description      String        @default("")
+  coverKey         String?
+  level            Level         @default(INICIAL)
+  estimatedMinutes Int           @default(60)
+  status           PublishStatus @default(DRAFT)
+  featured         Boolean       @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  instructorId String?
+  instructor   Instructor? @relation(fields: [instructorId], references: [id], onDelete: SetNull)
+
+  sponsors        Brand[]          @relation("CourseSponsors")
+  technicalSheets TechnicalSheet[] @relation("CourseTechnicalSheets")
+  modules         Module[]
+  quizzes         Quiz[]
+  enrollments     Enrollment[]
+  certificates    Certificate[]
+
+  @@index([status, categoryId])
+  @@map("course")
+}
+
+model Module {
+  id       String @id @default(cuid())
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title    String
+  position Int    @default(0)
+
+  lessons Lesson[]
+  quizzes Quiz[]
+
+  @@index([courseId, position])
+  @@map("module")
+}
+
+model Lesson {
+  id              String        @id @default(cuid())
+  moduleId        String
+  module          Module        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title           String
+  position        Int           @default(0)
+  videoProvider   VideoProvider
+  videoId         String
+  videoHash       String?
+  durationMinutes Int           @default(0)
+  content         String?
+  isPreview       Boolean       @default(false)
+
+  progress LessonProgress[]
+
+  @@index([moduleId, position])
+  @@map("lesson")
+}
+
+model Enrollment {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    String
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrolledAt  DateTime  @default(now())
+  completedAt DateTime?
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@map("enrollment")
+}
+
+model LessonProgress {
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+
+  @@id([userId, lessonId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+// ─────────────────────────── Evaluaciones ───────────────────────────
+
+model Quiz {
+  id           String  @id @default(cuid())
+  courseId     String
+  course       Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  moduleId     String?
+  module       Module? @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title        String
+  passingScore Int     @default(70)
+  required     Boolean @default(true)
+
+  questions Question[]
+  attempts  QuizAttempt[]
+
+  @@index([courseId])
+  @@map("quiz")
+}
+
+model Question {
+  id          String  @id @default(cuid())
+  quizId      String
+  quiz        Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  prompt      String
+  position    Int     @default(0)
+  explanation String?
+
+  options Option[]
+
+  @@index([quizId, position])
+  @@map("question")
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  position   Int      @default(0)
+
+  @@index([questionId])
+  @@map("option")
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score     Int
+  passed    Boolean
+  answers   Json
+  createdAt DateTime @default(now())
+
+  @@index([userId, quizId])
+  @@map("quiz_attempt")
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  issuedAt    DateTime @default(now())
+  holderName  String
+  courseTitle String
+  hours       Int
+
+  @@unique([userId, courseId])
+  @@map("certificate")
+}
+
+// ─────────────────────────── Eventos presenciales ───────────────────────────
+
+model Event {
+  id                   String        @id @default(cuid())
+  slug                 String        @unique
+  title                String
+  summary              String
+  description          String        @default("")
+  coverKey             String?
+  startsAt             DateTime
+  endsAt               DateTime
+  timezone             String        @default("America/Tegucigalpa")
+  venueName            String
+  address              String
+  city                 String
+  department           String?
+  country              String        @default("HN")
+  mapUrl               String?
+  capacity             Int
+  registrationClosesAt DateTime?
+  status               PublishStatus @default(DRAFT)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  sponsors      Brand[]             @relation("EventSponsors")
+  registrations EventRegistration[]
+
+  @@index([status, startsAt])
+  @@map("event")
+}
+
+model EventRegistration {
+  id          String             @id @default(cuid())
+  eventId     String
+  event       Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      RegistrationStatus
+  ticketCode  String             @unique
+  checkedInAt DateTime?
+  cancelledAt DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([eventId, userId])
+  @@index([eventId, status, createdAt])
+  @@map("event_registration")
+}
