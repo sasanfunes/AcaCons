@@ -48,6 +48,7 @@ next-env.d.ts
 
 # storage local de archivos subidos
 /storage
+/storage-e2e
 
 # playwright
 /test-results
