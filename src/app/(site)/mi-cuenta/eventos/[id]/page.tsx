@@ -27,8 +27,8 @@ export default async function TicketPage({ params }: PageProps<"/mi-cuenta/event
         ← Mis eventos
       </Link>
       <Card className="mt-4 overflow-hidden">
-        <div className="bg-ink-900 p-5 text-white">
-          <p className="text-xs uppercase tracking-wider text-brand-200">Entrada · evento presencial</p>
+        <div className="border-l-8 border-brand-500 bg-ink-900 p-5 text-white">
+          <p className="kicker text-brand-500">Entrada · evento presencial</p>
           <h2 className="mt-1 text-xl font-bold">{event.title}</h2>
         </div>
         <div className="space-y-4 p-5">

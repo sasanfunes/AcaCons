@@ -87,8 +87,9 @@ async function main() {
   }
 
   for (const c of courses) {
-    if (await db.course.findUnique({ where: { slug: c.slug } })) continue;
+    // Las portadas de ejemplo se regeneran siempre (así un cambio de diseño llega también a bases existentes).
     const coverKey = await putSvg(`seed/courses/${c.slug}.svg`, coverSvg(c.title, c.color, categories.find((x) => x.slug === c.category)!.name));
+    if (await db.course.findUnique({ where: { slug: c.slug } })) continue;
     const course = await db.course.create({
       data: {
         slug: c.slug,
@@ -133,9 +134,9 @@ async function main() {
   }
 
   for (const e of events()) {
-    if (await db.event.findUnique({ where: { slug: e.slug } })) continue;
     const { category, sponsors, color, ...data } = e;
-    const coverKey = await putSvg(`seed/events/${e.slug}.svg`, coverSvg(e.title, color, `Evento · ${e.city}`));
+    const coverKey = await putSvg(`seed/events/${e.slug}.svg`, coverSvg(e.title, color, `Sesión técnica · ${e.city}`));
+    if (await db.event.findUnique({ where: { slug: e.slug } })) continue;
     await db.event.create({
       data: {
         ...data,

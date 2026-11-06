@@ -13,7 +13,7 @@ export default async function IngresarPage({ searchParams }: PageProps<"/ingresa
   const next = typeof volver === "string" ? safeRedirect(volver) : undefined;
   if (await getOptionalUser()) redirect(next ?? "/mi-cuenta");
   return (
-    <AuthCard title="Ingresar" subtitle="Bienvenido de nuevo a la Academia del Constructor.">
+    <AuthCard title="Ingresar" subtitle="Bienvenido de nuevo a La Academia del Constructor.">
       {restablecida && (
         <Alert tone="success" className="mb-4">
           Su contraseña fue actualizada. Ya puede ingresar.

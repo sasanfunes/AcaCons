@@ -7,13 +7,14 @@ export function Container({ className, ...props }: ComponentProps<"div">) {
 }
 
 export function Card({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("rounded-lg border border-ink-200 bg-white shadow-sm", className)} {...props} />;
+  return <div className={cn("rounded-md border border-ink-200 bg-white shadow-sm", className)} {...props} />;
 }
 
 type Tone = "neutral" | "brand" | "success" | "warning" | "danger" | "info";
 const tones: Record<Tone, string> = {
   neutral: "bg-ink-100 text-ink-700",
-  brand: "bg-brand-100 text-brand-700",
+  // Etiqueta del manual: naranja con texto azul, mayúsculas espaciadas.
+  brand: "rounded-sm bg-brand-500 text-ink-900 uppercase tracking-wider text-[0.68rem] font-semibold",
   success: "bg-green-100 text-green-800",
   warning: "bg-amber-100 text-amber-800",
   danger: "bg-red-100 text-red-700",
@@ -84,6 +85,19 @@ export function PageHeader({ title, description, actions }: { title: string; des
         {description && <p className="mt-1 text-ink-600">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+    </div>
+  );
+}
+
+/** Encabezado de sección del manual: kicker naranja profundo + título azul sobre una línea fina. */
+export function SectionTitle({ kicker, title, action }: { kicker?: string; title: string; action?: ReactNode }) {
+  return (
+    <div className="mb-6 flex items-end justify-between gap-4 border-b border-ink-900/80 pb-3">
+      <div>
+        {kicker && <p className="kicker mb-1 text-brand-700">{kicker}</p>}
+        <h2 className="text-2xl font-bold text-ink-900">{title}</h2>
+      </div>
+      {action}
     </div>
   );
 }

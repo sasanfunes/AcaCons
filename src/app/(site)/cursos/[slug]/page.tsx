@@ -40,8 +40,8 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
     <>
       <section className="bg-ink-900 text-white">
         <Container className="grid gap-8 py-10 lg:grid-cols-[1fr_380px] lg:items-start">
-          <div>
-            <nav aria-label="Ruta" className="mb-3 text-sm text-ink-300">
+          <div className="border-l-8 border-brand-500 pl-6">
+            <nav aria-label="Ruta" className="kicker mb-3 text-brand-500">
               <Link href="/cursos" className="hover:text-white">
                 Cursos
               </Link>{" "}
@@ -110,12 +110,12 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
               ) : user ? (
                 <form action={enrollAction}>
                   <input type="hidden" name="courseId" value={course.id} />
-                  <SubmitButton className="w-full" size="lg" pendingText="Inscribiendo…">
+                  <SubmitButton className="w-full" size="lg" variant="accent" pendingText="Inscribiendo…">
                     Inscribirme gratis
                   </SubmitButton>
                 </form>
               ) : (
-                <ButtonLink href={`/registro?volver=${encodeURIComponent(`/cursos/${course.slug}`)}`} className="w-full" size="lg">
+                <ButtonLink href={`/registro?volver=${encodeURIComponent(`/cursos/${course.slug}`)}`} className="w-full" size="lg" variant="accent">
                   Inscribirme gratis
                 </ButtonLink>
               )}

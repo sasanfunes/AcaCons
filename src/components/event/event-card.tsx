@@ -10,7 +10,7 @@ export function EventDateBadge({ date, timeZone }: { date: Date; timeZone: strin
   const day = new Intl.DateTimeFormat("es-HN", { day: "numeric", timeZone }).format(date);
   const month = new Intl.DateTimeFormat("es-HN", { month: "short", timeZone }).format(date).replace(".", "");
   return (
-    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-lg bg-brand-600 text-white">
+    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-lg border-l-4 border-brand-500 bg-ink-900 text-white">
       <span className="text-2xl font-bold leading-none">{day}</span>
       <span className="text-xs uppercase">{month}</span>
     </div>

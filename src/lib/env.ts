@@ -11,7 +11,7 @@ const schema = z.object({
     .default("false")
     .transform((v) => v === "true"),
   EMAIL_DRIVER: z.enum(["console", "resend"]).default("console"),
-  EMAIL_FROM: z.string().default("Academia del Constructor <no-responder@ejemplo.com>"),
+  EMAIL_FROM: z.string().default("La Academia del Constructor <no-responder@ejemplo.com>"),
   RESEND_API_KEY: z.string().optional(),
   STORAGE_DRIVER: z.enum(["local", "s3", "db"]).default("local"),
   STORAGE_LOCAL_DIR: z.string().default("./storage"),

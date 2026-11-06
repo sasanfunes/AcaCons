@@ -20,7 +20,7 @@ export default async function MiCuentaPage({ searchParams }: PageProps<"/mi-cuen
 
   return (
     <div className="space-y-10">
-      {verificado && user.emailVerified && <Alert tone="success">¡Su correo fue verificado! Bienvenido a la Academia del Constructor.</Alert>}
+      {verificado && user.emailVerified && <Alert tone="success">¡Su correo fue verificado! Bienvenido a La Academia del Constructor.</Alert>}
       {!user.emailVerified && (
         <Alert>
           Aún no confirmó su correo electrónico. <Link href={`/verificar-email?email=${encodeURIComponent(user.email)}`} className="font-medium underline">Reenviar enlace</Link>

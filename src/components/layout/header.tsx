@@ -17,7 +17,7 @@ export async function Header() {
   const user = await getOptionalUser();
   return (
     <header className="sticky top-0 z-40 border-b border-ink-200 bg-white/95 backdrop-blur">
-      <Container className="flex h-16 items-center justify-between gap-4">
+      <Container className="flex h-[4.5rem] items-center justify-between gap-4">
         <Logo />
         <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
@@ -34,7 +34,7 @@ export async function Header() {
               <ButtonLink href="/ingresar" variant="ghost">
                 Ingresar
               </ButtonLink>
-              <ButtonLink href="/registro">Crear cuenta</ButtonLink>
+              <ButtonLink href="/registro" variant="accent">Crear cuenta</ButtonLink>
             </>
           )}
         </div>

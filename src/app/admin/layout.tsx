@@ -5,13 +5,13 @@ import { signOutAction } from "@/server/actions/auth";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { Logo } from "@/components/layout/logo";
 
-export const metadata: Metadata = { title: { default: "Administración", template: "%s · Admin · Academia del Constructor" }, robots: { index: false } };
+export const metadata: Metadata = { title: { default: "Administración", template: "%s · Admin · La Academia del Constructor" }, robots: { index: false } };
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const user = await requireAdmin();
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
-      <aside className="bg-ink-900 p-4 lg:sticky lg:top-0 lg:h-screen lg:w-60 lg:shrink-0">
+      <aside className="border-l-8 border-brand-500 bg-ink-900 p-4 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0">
         <div className="mb-4 flex items-center justify-between lg:block">
           <Logo dark />
           <p className="hidden text-xs text-ink-500 lg:mt-1 lg:block">Panel de administración</p>
@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           </form>
         </div>
       </aside>
-      <main id="contenido" className="min-w-0 flex-1 bg-ink-50 p-4 sm:p-8">
+      <main id="contenido" className="min-w-0 flex-1 bg-marfil p-4 sm:p-8">
         {children}
       </main>
     </div>

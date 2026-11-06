@@ -96,7 +96,7 @@ export default async function AdminUsers({ searchParams }: PageProps<"/admin/usu
             <a
               key={p}
               href={`?${new URLSearchParams({ ...(query ? { q: query } : {}), pagina: String(p) })}`}
-              className={p === page ? "rounded bg-brand-600 px-3 py-1 text-white" : "rounded border border-ink-300 bg-white px-3 py-1"}
+              className={p === page ? "rounded bg-ink-900 px-3 py-1 text-white" : "rounded border border-ink-300 bg-white px-3 py-1"}
             >
               {p}
             </a>

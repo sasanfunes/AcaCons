@@ -17,6 +17,10 @@ const csp = [
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@react-pdf/renderer"],
+  // Fuentes y logo que lee el generador de certificados en tiempo de ejecución (Vercel).
+  outputFileTracingIncludes: {
+    "/api/certificados/[code]/pdf": ["./src/lib/pdf/fonts/**", "./public/brand/logo.png"],
+  },
   experimental: {
     serverActions: { bodySizeLimit: "25mb" },
     authInterrupts: true,

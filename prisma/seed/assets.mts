@@ -1,4 +1,6 @@
 import { createElement as h } from "react";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { Document, Page, StyleSheet, Text, View, renderToBuffer } from "@react-pdf/renderer";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -17,23 +19,23 @@ function wrap(text: string, max = 26): string[] {
   return lines.slice(0, 3);
 }
 
-/** Portada SVG 16:9 con patrón de bloques y el título. */
-export function coverSvg(title: string, color: string, label: string): string {
-  const lines = wrap(title);
-  const blocks = Array.from({ length: 6 }, (_, row) =>
-    Array.from({ length: 8 }, (_, col) => {
-      const x = 640 + col * 80 + (row % 2 ? 40 : 0) - 80;
-      const y = row * 60;
-      return `<rect x="${x}" y="${y}" width="74" height="54" rx="3" fill="#fff" opacity="${0.05 + ((row + col) % 3) * 0.04}"/>`;
-    }).join(""),
-  ).join("");
+const POPPINS_700 = readFileSync(
+  fileURLToPath(new URL("../../node_modules/@fontsource/poppins/files/poppins-latin-700-normal.woff2", import.meta.url)),
+).toString("base64");
+
+/** Portada SVG 16:9 según el manual: fondo azul, franja naranja, etiqueta naranja con texto azul y título blanco en Poppins. */
+export function coverSvg(title: string, _color: string, label: string): string {
+  const lines = wrap(title, 24);
+  const tag = label.toUpperCase();
+  const tagWidth = Math.min(1100, 72 + tag.length * 27);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#0f172a"/></linearGradient></defs>
-<rect width="1280" height="720" fill="url(#g)"/>${blocks}
-<rect x="80" y="96" width="120" height="10" fill="#f97316"/>
-<text x="80" y="160" font-family="Arial, sans-serif" font-size="30" fill="#fed7aa" font-weight="bold">${esc(label.toUpperCase())}</text>
-${lines.map((l, i) => `<text x="80" y="${260 + i * 78}" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="#fff">${esc(l)}</text>`).join("")}
-<text x="80" y="640" font-family="Arial, sans-serif" font-size="28" fill="#cbd5e1">Academia del Constructor</text>
+<defs><style>@font-face{font-family:"Poppins";font-weight:700;src:url(data:font/woff2;base64,${POPPINS_700}) format("woff2")}text{font-family:Poppins,Arial,sans-serif;font-weight:700}</style></defs>
+<rect width="1280" height="720" fill="#0B2559"/>
+<rect width="28" height="720" fill="#F26A1B"/>
+<rect x="96" y="90" width="${tagWidth}" height="76" fill="#F26A1B"/>
+<text x="128" y="141" font-size="36" letter-spacing="3" fill="#0B2559">${esc(tag)}</text>
+${lines.map((l, i) => `<text x="96" y="${290 + i * 84}" font-size="68" fill="#FFFFFF">${esc(l)}</text>`).join("")}
+<text x="96" y="640" font-size="34" fill="#F26A1B">La Academia del Constructor</text>
 </svg>`;
 }
 

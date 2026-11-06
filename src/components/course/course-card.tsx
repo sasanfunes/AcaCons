@@ -11,7 +11,7 @@ export function CourseCard({ course, progress }: { course: CourseCardData; progr
   return (
     <Link
       href={`/cursos/${course.slug}`}
-      className="group flex flex-col overflow-hidden rounded-lg border border-ink-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-md border border-ink-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-ink-900 hover:shadow-md"
     >
       <Cover fileKey={course.coverKey} alt="" />
       <div className="flex flex-1 flex-col p-4">

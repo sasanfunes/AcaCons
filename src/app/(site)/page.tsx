@@ -9,7 +9,7 @@ import { CourseCard } from "@/components/course/course-card";
 import { EventCard } from "@/components/event/event-card";
 import { Logo } from "@/components/ui/cover";
 import { ButtonLink } from "@/components/ui/button";
-import { Container } from "@/components/ui/misc";
+import { Container, SectionTitle } from "@/components/ui/misc";
 
 export default async function Home() {
   const [courses, events, brands, categories, stats, user] = await Promise.all([
@@ -23,53 +23,43 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-ink-900 text-white">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, #fff 1px, transparent 1px), linear-gradient(#fff 1px, transparent 1px)",
-            backgroundSize: "80px 40px",
-          }}
-        />
-        <Container className="relative grid gap-10 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="mb-3 inline-block rounded-full bg-brand-600/20 px-3 py-1 text-sm font-medium text-brand-200">
-              Formación gratuita para Honduras y Centroamérica
-            </p>
-            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-              Aprenda a construir mejor con los <span className="text-brand-500">materiales correctos</span>
+      <section className="bg-ink-900 text-white">
+        <Container className="grid gap-10 py-14 sm:py-20 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+          <div className="border-l-8 border-brand-500 pl-6 sm:pl-8">
+            <p className="kicker text-brand-500">Del aula a la obra</p>
+            <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl">
+              Formación técnica que se aplica en la obra al día siguiente.
             </h1>
-            <p className="mt-4 max-w-xl text-lg text-ink-300">
-              Cursos en video, evaluaciones y certificados sobre concreto, mampostería, impermeabilización, techos y más.
-              Además, talleres presenciales con los fabricantes.
+            <p className="mt-5 max-w-xl text-lg text-ink-200">
+              Cursos por sistema constructivo, con evaluación y certificado, para arquitectos, ingenieros y constructores de
+              Honduras y Centroamérica. Preparación, instalación y mantenimiento: sistemas completos, no productos sueltos.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/cursos" size="lg">
-                Ver cursos
+              <ButtonLink href="/cursos" size="lg" variant="accent">
+                Ver el programa de cursos
               </ButtonLink>
               {user ? (
                 <ButtonLink href="/mi-cuenta" size="lg" variant="outline">
-                  Continuar aprendiendo
+                  Continuar mis cursos
                 </ButtonLink>
               ) : (
                 <ButtonLink href="/registro" size="lg" variant="outline">
-                  Crear cuenta gratis
+                  Crear cuenta
                 </ButtonLink>
               )}
             </div>
+            <p className="kicker mt-8 text-ink-300">Un programa de Construnova</p>
           </div>
-          <dl className="grid grid-cols-2 gap-4">
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-white/10">
             {[
               { label: "Cursos disponibles", value: stats.courses },
-              { label: "Próximos eventos", value: stats.events },
-              { label: "Marcas aliadas", value: stats.brands },
+              { label: "Sesiones presenciales", value: stats.events },
+              { label: "Fabricantes", value: stats.brands },
               { label: "Certificados emitidos", value: stats.certificates },
             ].map((s) => (
-              <div key={s.label} className="rounded-lg border border-white/10 bg-white/5 p-5">
-                <dt className="text-sm text-ink-300">{s.label}</dt>
-                <dd className="mt-1 text-3xl font-bold">{s.value}</dd>
+              <div key={s.label} className="bg-ink-900 p-5">
+                <dd className="text-4xl font-bold text-brand-500">{s.value}</dd>
+                <dt className="mt-1 text-sm text-ink-200">{s.label}</dt>
               </div>
             ))}
           </dl>
@@ -79,13 +69,13 @@ export default async function Home() {
       <Container className="py-14">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: PlayCircle, title: "Videos prácticos", text: "Lecciones cortas, a su ritmo, desde el celular o la computadora." },
-            { icon: Award, title: "Certificados verificables", text: "Al aprobar la evaluación final, descargue su certificado con código QR." },
-            { icon: CalendarDays, title: "Eventos presenciales", text: "Talleres y demostraciones en obra con cupos limitados." },
-            { icon: FileText, title: "Fichas técnicas", text: "Descargue la información técnica de los productos de cada marca." },
+            { icon: PlayCircle, title: "Módulos por sistema", text: "Lecciones en video con normas, especificaciones y procedimientos de instalación." },
+            { icon: Award, title: "Evaluación y certificado", text: "Al aprobar la evaluación final obtiene un certificado verificable con código QR." },
+            { icon: CalendarDays, title: "Sesiones presenciales", text: "Demostraciones en aula y en obra con instructores de experiencia de campo." },
+            { icon: FileText, title: "Fichas técnicas", text: "Información técnica de cada sistema para especificar e instalar correctamente." },
           ].map((f) => (
-            <div key={f.title}>
-              <f.icon className="h-8 w-8 text-brand-600" aria-hidden />
+            <div key={f.title} className="border-t-2 border-ink-900 pt-4">
+              <f.icon className="h-8 w-8 text-brand-500" aria-hidden />
               <h2 className="mt-3 font-semibold">{f.title}</h2>
               <p className="mt-1 text-sm text-ink-600">{f.text}</p>
             </div>
@@ -94,14 +84,17 @@ export default async function Home() {
       </Container>
 
       {courses.length > 0 && (
-        <section className="bg-ink-50 py-14">
+        <section className="border-y border-ink-200 bg-white py-14">
           <Container>
-            <div className="mb-6 flex items-end justify-between">
-              <h2 className="text-2xl font-bold">Cursos destacados</h2>
-              <Link href="/cursos" className="text-sm font-medium text-brand-700 hover:underline">
-                Ver todos →
-              </Link>
-            </div>
+            <SectionTitle
+              kicker="Programa"
+              title="Cursos destacados"
+              action={
+                <Link href="/cursos" className="text-sm font-medium text-brand-700 hover:underline">
+                  Ver todos →
+                </Link>
+              }
+            />
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {courses.map((c) => (
                 <CourseCard key={c.id} course={c} />
@@ -113,7 +106,7 @@ export default async function Home() {
                   <Link
                     key={c.id}
                     href={`/cursos?categoria=${c.slug}`}
-                    className="rounded-full border border-ink-300 bg-white px-3 py-1 text-sm hover:border-brand-600 hover:text-brand-700"
+                    className="rounded-sm border border-ink-300 bg-marfil px-3 py-1 text-sm hover:border-ink-900"
                   >
                     {c.name} ({c._count.courses})
                   </Link>
@@ -126,12 +119,15 @@ export default async function Home() {
 
       {events.length > 0 && (
         <Container className="py-14">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-2xl font-bold">Próximos eventos presenciales</h2>
-            <Link href="/eventos" className="text-sm font-medium text-brand-700 hover:underline">
-              Ver agenda →
-            </Link>
-          </div>
+          <SectionTitle
+            kicker="Sesiones técnicas"
+            title="Próximos eventos presenciales"
+            action={
+              <Link href="/eventos" className="text-sm font-medium text-brand-700 hover:underline">
+                Ver agenda →
+              </Link>
+            }
+          />
           <div className="grid gap-4 lg:grid-cols-3">
             {events.map((e) => (
               <EventCard key={e.id} event={e} />
