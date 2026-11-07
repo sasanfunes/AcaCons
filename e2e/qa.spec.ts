@@ -34,7 +34,11 @@ test("alumno pregunta en una lección, el admin responde y el alumno ve la respu
   await expect(admin.getByText(/use postes cada 40 cm/)).toBeVisible();
 
   await page.goto(lessonUrl.split("?")[0] + "?tab=preguntas");
-  await page.getByText("¿Separación de postes en muros altos?").click();
-  await expect(page.getByText("Equipo académico", { exact: true })).toBeVisible();
+  // El clic puede llegar antes de que la página termine de hidratarse: se reintenta hasta ver la respuesta.
+  await expect(async () => {
+    const badge = page.getByText("Equipo académico", { exact: true });
+    if (!(await badge.isVisible())) await page.getByText("¿Separación de postes en muros altos?").click();
+    await expect(badge).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 10_000 });
   await expect(page.getByText(/use postes cada 40 cm/)).toBeVisible();
 });

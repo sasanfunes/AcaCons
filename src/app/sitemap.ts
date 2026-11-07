@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 
+// Se genera en cada solicitud para reflejar cursos y eventos nuevos (y no requiere la base durante el build).
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.APP_URL ?? "http://localhost:3000";
   const [courses, events, brands] = await Promise.all([

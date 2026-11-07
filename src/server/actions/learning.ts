@@ -51,6 +51,26 @@ export async function toggleLessonAction(formData: FormData) {
   if (done && next.startsWith(`/cursos/${slug}/`)) redirect(next);
 }
 
+export type AutoCompleteResult = { ok: boolean; courseCompleted?: boolean; certificateCode?: string };
+
+/** Marca la lección como completada cuando el video llega casi al final (sin redirigir). */
+export async function autoCompleteLessonAction(lessonId: string): Promise<AutoCompleteResult> {
+  const user = await requireUser();
+  const lesson = await db.lesson.findUnique({
+    where: { id: String(lessonId) },
+    select: { module: { select: { course: { select: { slug: true } } } } },
+  });
+  if (!lesson) return { ok: false };
+  try {
+    const r = await markLessonComplete(user.id, String(lessonId));
+    revalidatePath(`/cursos/${lesson.module.course.slug}`, "layout");
+    return { ok: true, courseCompleted: r.complete, certificateCode: r.certificate?.code };
+  } catch (e) {
+    if (e instanceof DomainError) return { ok: false };
+    throw e;
+  }
+}
+
 export type QuizActionState = ActionState & {
   result?: { score: number; passed: boolean; correctCount: number; total: number; perQuestion: { questionId: string; selectedOptionId: string | null; correctOptionId: string | null; correct: boolean }[] };
   certificateCode?: string;

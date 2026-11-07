@@ -44,10 +44,18 @@ function ytResult(id: string | undefined): ParsedVideo | null {
   return id && YT_ID.test(id) ? { provider: "YOUTUBE", id } : null;
 }
 
-/** URL para el iframe embebido. YouTube usa el dominio de privacidad mejorada. */
-export function embedUrl(v: ParsedVideo): string {
+/**
+ * URL para el iframe embebido. YouTube usa el dominio de privacidad mejorada.
+ * Con `jsApiOrigin`, YouTube habilita su API por postMessage (necesaria para seguir el avance del video).
+ */
+export function embedUrl(v: ParsedVideo, opts: { jsApiOrigin?: string } = {}): string {
   if (v.provider === "YOUTUBE") {
-    return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?rel=0&modestbranding=1`;
+    const params = new URLSearchParams({ rel: "0", modestbranding: "1" });
+    if (opts.jsApiOrigin) {
+      params.set("enablejsapi", "1");
+      params.set("origin", opts.jsApiOrigin);
+    }
+    return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?${params}`;
   }
   const params = new URLSearchParams({ dnt: "1" });
   if (v.hash) params.set("h", v.hash);

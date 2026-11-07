@@ -5,6 +5,7 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Download, FileText } from "luc
 import { getCourseBySlug, getLessonForPlayer, getUserCourseState, lessonOrder } from "@/server/queries/courses";
 import { getOptionalUser } from "@/server/guards";
 import { enrollAction, toggleLessonAction } from "@/server/actions/learning";
+import { env } from "@/lib/env";
 import { formatBytes } from "@/lib/format";
 import { renderMarkdown } from "@/lib/markdown";
 import { fileUrl } from "@/lib/storage/url";
@@ -60,6 +61,7 @@ export default async function LessonPage({ params, searchParams }: PageProps<"/c
           )}
         </form>
       )}
+      {state && !done && <p className="mt-2 text-xs text-ink-500">La lección se marca sola al llegar al final del video.</p>}
       {!state && (
         <Alert className="mt-4">
           Está viendo una lección de muestra.{" "}
@@ -124,7 +126,17 @@ export default async function LessonPage({ params, searchParams }: PageProps<"/c
       <div className="min-w-0 flex-1">
         <div className="bg-black">
           <div className="mx-auto max-w-[1100px]">
-            <VideoPlayer provider={lesson.videoProvider} videoId={lesson.videoId} hash={lesson.videoHash} title={lesson.title} />
+            <VideoPlayer
+              provider={lesson.videoProvider}
+              videoId={lesson.videoId}
+              hash={lesson.videoHash}
+              title={lesson.title}
+              track={!!state && !done}
+              lessonId={lesson.id}
+              origin={env.APP_URL}
+              nextHref={nextHref}
+              nextLabel={next ? "Siguiente lección" : finalQuiz ? "Ir a la evaluación final" : "Volver al curso"}
+            />
           </div>
         </div>
         <PlayerTabs
