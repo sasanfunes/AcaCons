@@ -102,6 +102,9 @@ El proyecto está preparado para Vercel + Neon sin correr comandos en su computa
 3. Pestaña **Storage → Create Database → Neon** y conéctela al proyecto (crea `DATABASE_URL` y `DATABASE_URL_UNPOOLED`).
 4. **Deploy** (o **Redeploy** si el primer intento fue antes de crear la base).
 
+Vercel publica el sitio con HTTPS (certificado automático, también para dominios propios) y redirige HTTP a HTTPS.
+El portal agrega además el header HSTS y `upgrade-insecure-requests`, y solo acepta enlaces `https://` en el admin.
+
 `APP_URL` es opcional en Vercel: si no se define, se usa el dominio de producción del proyecto. Si conecta un dominio
 propio, defina `APP_URL` con él. Sin Resend los correos solo quedan en los registros, así que deje
 `REQUIRE_EMAIL_VERIFICATION` en `false` hasta configurarlo.

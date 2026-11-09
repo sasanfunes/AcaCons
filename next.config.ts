@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+// HTTPS estricto cuando el sitio se publica con HTTPS (Vercel o APP_URL https). En localhost por HTTP no aplica.
+const httpsOnly = !!process.env.VERCEL || (process.env.APP_URL ?? "").startsWith("https://");
+
 // Política de seguridad: solo se permiten iframes de YouTube (modo privacidad) y Vimeo.
 const csp = [
   "default-src 'self'",
@@ -13,6 +16,7 @@ const csp = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
+  ...(httpsOnly ? ["upgrade-insecure-requests"] : []),
 ].join("; ");
 
 const nextConfig: NextConfig = {
@@ -34,6 +38,7 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          ...(httpsOnly ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }] : []),
         ],
       },
     ];

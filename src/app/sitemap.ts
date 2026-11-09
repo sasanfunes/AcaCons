@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { env } from "@/lib/env";
 import { db } from "@/lib/db";
 
 // Se genera en cada solicitud para reflejar cursos y eventos nuevos (y no requiere la base durante el build).
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.APP_URL ?? "http://localhost:3000";
+  const base = env.APP_URL;
   const [courses, events, brands] = await Promise.all([
     db.course.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }),
     db.event.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }),

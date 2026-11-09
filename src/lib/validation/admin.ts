@@ -22,7 +22,16 @@ const ids = z
   .union([z.string(), z.array(z.string())])
   .optional()
   .transform((v) => (v === undefined ? [] : Array.isArray(v) ? v : [v]).filter(Boolean));
-const url = z.union([z.literal(""), z.string().trim().url("URL inválida").max(500)]).transform((v) => v || null);
+export const httpsUrl = z.union([
+  z.literal(""),
+  z
+    .string()
+    .trim()
+    .max(500)
+    .url("URL inválida")
+    .refine((v) => v.toLowerCase().startsWith("https://"), "Use un enlace que empiece con https://"),
+]);
+const url = httpsUrl.transform((v) => v || null);
 
 /** Texto de un ítem por línea → array (máx. 10 ítems de 160 caracteres). */
 const lines = z
