@@ -1,17 +1,17 @@
 import { env } from "@/lib/env";
 
 function layout(title: string, body: string) {
-  return `<!doctype html><html lang="es"><body style="font-family:Poppins,Arial,sans-serif;background:#FBFAF7;padding:24px;color:#0B2559">
-<table role="presentation" width="100%" style="max-width:560px;margin:auto;background:#fff;border:1px solid #e0e3ea">
-<tr><td style="background:#0B2559;border-left:8px solid #F26A1B;padding:18px 24px">
+  return `<!doctype html><html lang="es"><body style="font-family:Poppins,Arial,sans-serif;background:#FBFAF7;padding:24px;color:#2C2C2A">
+<table role="presentation" width="100%" style="max-width:560px;margin:auto;background:#fff;border:1px solid #E0DDD6">
+<tr><td style="background:#2C2C2A;border-left:8px solid #FFC20E;padding:18px 24px">
 <img src="${env.APP_URL}/brand/logo-negativo.png" alt="La Academia del Constructor" width="180" style="display:block;height:auto"></td></tr>
-<tr><td style="padding:24px;line-height:1.6"><h1 style="font-size:20px;margin:0 0 12px;color:#0B2559">${title}</h1>${body}</td></tr>
-<tr><td style="padding:16px 24px;color:#5A6680;font-size:12px;border-top:1px solid #e0e3ea">Un programa de Construnova. Este es un mensaje automático, por favor no lo responda.</td></tr>
+<tr><td style="padding:24px;line-height:1.6"><h1 style="font-size:20px;margin:0 0 12px;color:#2C2C2A">${title}</h1>${body}</td></tr>
+<tr><td style="padding:16px 24px;color:#5E5C57;font-size:12px;border-top:1px solid #E0DDD6">Un programa de Construnova. Este es un mensaje automático, por favor no lo responda.</td></tr>
 </table></body></html>`;
 }
 
 function button(href: string, label: string) {
-  return `<p><a href="${href}" style="display:inline-block;background:#0B2559;color:#fff;padding:10px 18px;border-radius:4px;text-decoration:none;font-weight:600">${label}</a></p>`;
+  return `<p><a href="${href}" style="display:inline-block;background:#2C2C2A;color:#fff;padding:10px 18px;border-radius:4px;text-decoration:none;font-weight:600">${label}</a></p>`;
 }
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -21,7 +21,7 @@ export function verificationEmail(name: string, url: string) {
     subject: "Confirme su correo electrónico",
     html: layout(
       `Hola, ${esc(name)}`,
-      `<p>Gracias por registrarse en La Academia del Constructor. Para activar su cuenta confirme su correo:</p>${button(url, "Confirmar correo")}<p style="font-size:12px;color:#5A6680">Si el botón no funciona, copie este enlace: ${url}</p>`,
+      `<p>Gracias por registrarse en La Academia del Constructor. Para activar su cuenta confirme su correo:</p>${button(url, "Confirmar correo")}<p style="font-size:12px;color:#5E5C57">Si el botón no funciona, copie este enlace: ${url}</p>`,
     ),
     text: `Confirme su correo: ${url}`,
   };
@@ -73,7 +73,7 @@ export function questionAnsweredEmail(name: string, questionTitle: string, cours
     html: layout(
       `Hola, ${esc(name)}`,
       `<p>El equipo académico respondió su pregunta <strong>«${esc(questionTitle)}»</strong> del curso <strong>${esc(courseTitle)}</strong>:</p>
-       <blockquote style="margin:12px 0;padding:12px 16px;border-left:4px solid #F26A1B;background:#FBFAF7">${esc(answer).replace(/\n/g, "<br>")}</blockquote>${button(url, "Ver la conversación")}`,
+       <blockquote style="margin:12px 0;padding:12px 16px;border-left:4px solid #FFC20E;background:#FBFAF7">${esc(answer).replace(/\n/g, "<br>")}</blockquote>${button(url, "Ver la conversación")}`,
     ),
   };
 }

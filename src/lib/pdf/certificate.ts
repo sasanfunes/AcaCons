@@ -5,11 +5,11 @@ import { Document, Font, Image, Page, StyleSheet, Text, View, renderToBuffer } f
 import QRCode from "qrcode";
 import { formatDate } from "@/lib/format";
 
-// Identidad (manual de marca): Poppins, azul Academia, naranja profundo para texto pequeño, logo principal sobre blanco.
-const NAVY = "#0B2559";
-const ORANGE = "#F26A1B";
-const ORANGE_DEEP = "#C24E0B";
-const SLATE = "#5A6680";
+// Identidad (manual de marca): Poppins, carbón, amarillo como franja y concreto oscuro para texto pequeño.
+const NAVY = "#2C2C2A"; // carbón
+const ORANGE = "#FFC20E"; // amarillo maquinaria
+const ORANGE_DEEP = "#5E5C57"; // concreto oscuro
+const SLATE = "#5E5C57";
 
 const fontDir = path.join(process.cwd(), "src/lib/pdf/fonts");
 Font.register({

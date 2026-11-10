@@ -23,19 +23,19 @@ const POPPINS_700 = readFileSync(
   fileURLToPath(new URL("../../node_modules/@fontsource/poppins/files/poppins-latin-700-normal.woff2", import.meta.url)),
 ).toString("base64");
 
-/** Portada SVG 16:9 según el manual: fondo azul, franja naranja, etiqueta naranja con texto azul y título blanco en Poppins. */
+/** Portada SVG 16:9 según el manual: fondo carbón, franja amarilla, etiqueta amarilla con texto carbón y título blanco en Poppins. */
 export function coverSvg(title: string, _color: string, label: string): string {
   const lines = wrap(title, 24);
   const tag = label.toUpperCase();
   const tagWidth = Math.min(1100, 72 + tag.length * 27);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
 <defs><style>@font-face{font-family:"Poppins";font-weight:700;src:url(data:font/woff2;base64,${POPPINS_700}) format("woff2")}text{font-family:Poppins,Arial,sans-serif;font-weight:700}</style></defs>
-<rect width="1280" height="720" fill="#0B2559"/>
-<rect width="28" height="720" fill="#F26A1B"/>
-<rect x="96" y="90" width="${tagWidth}" height="76" fill="#F26A1B"/>
-<text x="128" y="141" font-size="36" letter-spacing="3" fill="#0B2559">${esc(tag)}</text>
+<rect width="1280" height="720" fill="#2C2C2A"/>
+<rect width="28" height="720" fill="#FFC20E"/>
+<rect x="96" y="90" width="${tagWidth}" height="76" fill="#FFC20E"/>
+<text x="128" y="141" font-size="36" letter-spacing="3" fill="#2C2C2A">${esc(tag)}</text>
 ${lines.map((l, i) => `<text x="96" y="${290 + i * 84}" font-size="68" fill="#FFFFFF">${esc(l)}</text>`).join("")}
-<text x="96" y="640" font-size="34" fill="#F26A1B">La Academia del Constructor</text>
+<text x="96" y="640" font-size="34" fill="#FFC20E">La Academia del Constructor</text>
 </svg>`;
 }
 

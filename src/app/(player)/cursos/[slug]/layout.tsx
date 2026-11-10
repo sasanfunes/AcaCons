@@ -30,7 +30,7 @@ export default async function PlayerLayout({ children, params }: LayoutProps<"/c
           <div className="flex shrink-0 items-center gap-2 text-sm" title={`${progress}% completado`}>
             <svg viewBox="0 0 36 36" className="h-9 w-9 -rotate-90" aria-hidden>
               <circle cx="18" cy="18" r={r} fill="none" stroke="rgba(255,255,255,.25)" strokeWidth="3" />
-              <circle cx="18" cy="18" r={r} fill="none" stroke="#F26A1B" strokeWidth="3" strokeDasharray={c} strokeDashoffset={c * (1 - progress / 100)} strokeLinecap="round" />
+              <circle cx="18" cy="18" r={r} fill="none" stroke="#FFC20E" strokeWidth="3" strokeDasharray={c} strokeDashoffset={c * (1 - progress / 100)} strokeLinecap="round" />
             </svg>
             <span className="hidden md:inline">Su progreso: {progress}%</span>
           </div>

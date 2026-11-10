@@ -50,7 +50,7 @@ export default async function MiCuentaPage({ searchParams }: PageProps<"/mi-cuen
             {certificates.map((c) => (
               <li key={c.id}>
                 <Card className="flex items-center gap-4 p-4">
-                  <Award className="h-10 w-10 shrink-0 text-brand-600" aria-hidden />
+                  <Award className="h-10 w-10 shrink-0 rounded-md bg-brand-500 p-2 text-ink-900" aria-hidden />
                   <div className="min-w-0 flex-1">
                     <Link href={`/certificados/${c.code}`} className="font-semibold hover:text-brand-700">
                       {c.courseTitle}

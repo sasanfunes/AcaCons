@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 
 /**
- * Imagotipo oficial (manual de marca): versión principal sobre fondos claros y negativo sobre azul.
+ * Imagotipo oficial (manual de marca): versión principal sobre fondos claros y negativo sobre carbón.
  * Es arte final: no se recompone con texto. Ancho mínimo 120 px.
  */
 export function Logo({ dark = false, className }: { dark?: boolean; className?: string }) {

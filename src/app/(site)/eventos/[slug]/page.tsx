@@ -67,7 +67,7 @@ export default async function EventPage({ params }: PageProps<"/eventos/[slug]">
         <Card className="space-y-4 p-5">
           <ul className="space-y-3 text-sm">
             <li className="flex gap-3">
-              <CalendarDays className="h-5 w-5 shrink-0 text-brand-600" aria-hidden />
+              <CalendarDays className="h-5 w-5 shrink-0 text-ink-900" aria-hidden />
               <span>
                 <span className="font-medium first-letter:uppercase">{formatEventRange(event.startsAt, event.endsAt, event.timezone)}</span>
                 <span className="block text-xs text-ink-500">
@@ -76,7 +76,7 @@ export default async function EventPage({ params }: PageProps<"/eventos/[slug]">
               </span>
             </li>
             <li className="flex gap-3">
-              <MapPin className="h-5 w-5 shrink-0 text-brand-600" aria-hidden />
+              <MapPin className="h-5 w-5 shrink-0 text-ink-900" aria-hidden />
               <span>
                 <span className="font-medium">{event.venueName}</span>
                 <span className="block text-ink-600">
@@ -91,7 +91,7 @@ export default async function EventPage({ params }: PageProps<"/eventos/[slug]">
               </span>
             </li>
             <li className="flex gap-3">
-              <Users className="h-5 w-5 shrink-0 text-brand-600" aria-hidden />
+              <Users className="h-5 w-5 shrink-0 text-ink-900" aria-hidden />
               <span>{left > 0 ? `${left} de ${event.capacity} cupos disponibles` : `Cupo completo (${event.capacity} personas)`}</span>
             </li>
           </ul>

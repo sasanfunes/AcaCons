@@ -8,7 +8,7 @@ type Size = "sm" | "md" | "lg";
 const base =
   "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:pointer-events-none disabled:opacity-50";
 const variants: Record<Variant, string> = {
-  // Manual: azul para acciones; naranja solo con texto azul (nunca blanco sobre naranja).
+  // Manual: carbón para acciones; amarillo solo con texto carbón (nunca blanco sobre amarillo).
   primary: "bg-ink-900 text-white hover:bg-ink-800",
   accent: "bg-brand-500 text-ink-900 font-semibold hover:bg-brand-200",
   secondary: "bg-ink-700 text-white hover:bg-ink-800",

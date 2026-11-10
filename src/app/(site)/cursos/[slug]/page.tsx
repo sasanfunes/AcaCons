@@ -364,7 +364,7 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
       {/* CTA fijo en móvil */}
       {!state?.certificate && <div className="h-20 lg:hidden" aria-hidden />}
       {!state?.certificate && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white p-3 shadow-[0_-4px_12px_rgba(11,37,89,0.1)] lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white p-3 shadow-[0_-4px_12px_rgba(44,44,42,0.12)] lg:hidden">
           <div className="mx-auto flex max-w-md items-center gap-3">
             <p className="line-clamp-2 flex-1 text-sm font-semibold">{course.title}</p>
             <div className="shrink-0 [&_a]:whitespace-nowrap [&_a]:px-4 [&_button]:whitespace-nowrap [&_button]:px-4">

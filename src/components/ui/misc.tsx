@@ -13,7 +13,7 @@ export function Card({ className, ...props }: ComponentProps<"div">) {
 type Tone = "neutral" | "brand" | "success" | "warning" | "danger" | "info";
 const tones: Record<Tone, string> = {
   neutral: "bg-ink-100 text-ink-700",
-  // Etiqueta del manual: naranja con texto azul, mayúsculas espaciadas.
+  // Etiqueta del manual: amarillo con texto carbón, mayúsculas espaciadas.
   brand: "rounded-sm bg-brand-500 text-ink-900 uppercase tracking-wider text-[0.68rem] font-semibold",
   success: "bg-green-100 text-green-800",
   warning: "bg-amber-100 text-amber-800",
@@ -89,7 +89,7 @@ export function PageHeader({ title, description, actions }: { title: string; des
   );
 }
 
-/** Encabezado de sección del manual: kicker naranja profundo + título azul sobre una línea fina. */
+/** Encabezado de sección del manual: kicker en concreto oscuro + título carbón sobre una línea fina. */
 export function SectionTitle({ kicker, title, action }: { kicker?: string; title: string; action?: ReactNode }) {
   return (
     <div className="mb-6 flex items-end justify-between gap-4 border-b border-ink-900/80 pb-3">

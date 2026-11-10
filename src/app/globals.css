@@ -6,22 +6,24 @@
 
 @theme {
   --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  /* Manual de marca · La Academia del Constructor */
-  --color-brand-50: #fdebdf; /* Durazno: fondos suaves */
-  --color-brand-100: #fdebdf;
-  --color-brand-200: #f9c9a8;
-  --color-brand-500: #f26a1b; /* Naranja Academia: símbolo, acentos, títulos ≥ 18 pt */
-  --color-brand-600: #f26a1b;
-  --color-brand-700: #c24e0b; /* Naranja profundo: texto naranja pequeño */
-  --color-ink-50: #f4f3ef;
-  --color-ink-100: #eceae5;
-  --color-ink-200: #e0e3ea;
-  --color-ink-300: #c9cfdb;
-  --color-ink-500: #5a6680; /* Pizarra: texto secundario */
-  --color-ink-600: #5a6680;
-  --color-ink-700: #2a3a63;
-  --color-ink-800: #142f6b;
-  --color-ink-900: #0b2559; /* Azul Academia: títulos, texto, fondos */
+  /* Manual de marca · La Academia del Constructor (amarillo de maquinaria sobre gris de obra) */
+  --color-brand-50: #fff3cc; /* Amarillo claro: fondos suaves */
+  --color-brand-100: #fff3cc;
+  --color-brand-200: #ffd95a; /* hover de botones amarillos */
+  --color-brand-500: #ffc20e; /* Amarillo maquinaria: símbolo, franjas, acentos (nunca texto sobre claro) */
+  --color-brand-600: #ffc20e;
+  --color-brand-700: #5e5c57; /* Texto de acento pequeño sobre fondo claro: concreto oscuro */
+  --color-ink-50: #f4f2ee;
+  --color-ink-100: #ebe8e2;
+  --color-ink-200: #e0ddd6;
+  --color-ink-300: #cbc8c0;
+  --color-ink-400: #a9a69f;
+  --color-ink-500: #5e5c57; /* Concreto oscuro: texto secundario */
+  --color-ink-600: #5e5c57;
+  --color-ink-700: #44433f;
+  --color-ink-800: #3a3a37;
+  --color-ink-900: #2c2c2a; /* Carbón: títulos, texto, fondos */
+  --color-concreto: #8e8c86; /* Gris concreto: logo, divisores, títulos */
   --color-marfil: #fbfaf7; /* Fondo base */
 }
 

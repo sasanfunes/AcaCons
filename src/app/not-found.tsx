@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <main className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center p-8 text-center">
-      <p className="text-5xl font-bold text-brand-600">404</p>
+      <p className="inline-block border-b-8 border-brand-500 text-5xl font-bold text-ink-900">404</p>
       <h1 className="mt-2 text-xl font-semibold">No encontramos lo que busca</h1>
       <p className="mt-2 text-ink-600">Es posible que la página haya cambiado de dirección o ya no esté disponible.</p>
       <Link href="/" className="mt-6 text-brand-700 underline">

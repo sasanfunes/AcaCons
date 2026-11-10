@@ -10,7 +10,7 @@ export default async function VerificarEmailPage({ searchParams }: PageProps<"/v
   return (
     <AuthCard title="Revise su correo">
       <div className="mb-6 flex gap-3 text-sm text-ink-700">
-        <MailCheck className="h-6 w-6 shrink-0 text-brand-600" aria-hidden />
+        <MailCheck className="h-6 w-6 shrink-0 text-ink-900" aria-hidden />
         <p>
           Le enviamos un enlace de confirmación{typeof email === "string" ? <> a <strong>{email}</strong></> : null}. Ábralo para
           activar su cuenta. Si no lo encuentra, revise la carpeta de correo no deseado.

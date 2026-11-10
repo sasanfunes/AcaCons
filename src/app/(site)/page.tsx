@@ -204,7 +204,9 @@ export default async function Home() {
               { icon: FileText, title: "Fichas técnicas", text: "Información técnica de cada sistema para especificar e instalar correctamente." },
             ].map((f) => (
               <div key={f.title} className="border-t-2 border-ink-900 pt-4">
-                <f.icon className="h-8 w-8 text-brand-500" aria-hidden />
+                <span className="flex h-12 w-12 items-center justify-center rounded-md bg-brand-500">
+                  <f.icon className="h-6 w-6 text-ink-900" aria-hidden />
+                </span>
                 <h2 className="mt-3 font-semibold">{f.title}</h2>
                 <p className="mt-1 text-sm text-ink-600">{f.text}</p>
               </div>
